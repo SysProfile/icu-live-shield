@@ -44,12 +44,17 @@ Con el botón **Desvincular** de la extensión, desde el panel de ICU.Live, o de
 
 | Archivo | Qué hace |
 |---|---|
-| `manifest.json` | Permisos: `storage` (guardar el vínculo), `alarms` (mantener el titileo del LED) y `https://cdn.icu.live/shield/*` (enviar el número). |
+| `manifest.json`, `manifest.firefox.json` | Chromium y Firefox. Permisos: `storage` (guardar el vínculo), `alarms` (mantener el titileo del LED) y `https://cdn.icu.live/shield/*` (enviar el número). |
 | `inject.js` | Dentro de YouTube Studio: toma el total de suscriptores de la respuesta de Studio. |
 | `bridge.js` | Le pasa ese número a la extensión. |
 | `bg.js` | Guarda el vínculo y envía el número a ICU.Live. |
 | `link-page.js` | Vincula la extensión desde el enlace del QR. |
 | `popup.html`, `popup.js` | Ventana de la extensión: vincular, estado y desvincular. |
+
+## Paquetes
+
+`manifest.json` es el de Chrome, Edge y Opera (Chromium). Firefox usa `manifest.firefox.json`. `python build.py` arma en
+`dist/` un zip para cada uno, listo para subir a su tienda.
 
 ## Licencia
 
