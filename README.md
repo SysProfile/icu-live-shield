@@ -18,7 +18,7 @@ public one, gets the 🛡️ shield on the ICU.Live monitor.
 - [Monitor](https://monitor.icu.live) — real-time audience of the channels, where the 🛡️ shield is shown.
 - [User manual](https://monitor.icu.live/manual/#escudo) — the shield and the padlock, explained (in Spanish).
 - [Privacy policy](https://icu.live/shield-privacy.html?lang=en) — what the extension reads, sends and stores.
-- [ICU.Live panel → Shield](https://icu.live/admin/shield.php) — where the channel owner generates the linking code
+- [ICU.Live panel → Integration → Shield](https://icu.live/admin/shield.php) — where the channel owner generates the linking code
   (requires an ICU.Live user).
 
 ## What it does

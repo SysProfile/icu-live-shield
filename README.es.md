@@ -18,7 +18,7 @@ usa y cuyo número coincide con el público lleva el escudo 🛡️ en el monito
 - [Monitor](https://monitor.icu.live): la audiencia de los canales en tiempo real, donde se ve el escudo 🛡️.
 - [Manual de uso](https://monitor.icu.live/manual/#escudo): el escudo y el candado, explicados.
 - [Política de privacidad](https://icu.live/shield-privacy.html?lang=es): qué lee, envía y guarda la extensión.
-- [Panel de ICU.Live → Escudo](https://icu.live/admin/shield.php): donde el dueño del canal genera el código de
+- [Panel de ICU.Live → Integración → Escudo](https://icu.live/admin/shield.php): donde el dueño del canal genera el código de
   vinculación (requiere un usuario de ICU.Live).
 
 ## Qué hace
