@@ -3,15 +3,15 @@
 // descarta: no se guarda para reenviar. No contiene ninguna clave: el vínculo se hace con un código de un solo uso.
 const API = 'https://cdn.icu.live/shield/';
 
-// LED del ícono:
+// LED del ícono, sólo mientras se está viendo studio.youtube.com (en cualquier otro sitio, el ícono va sin LED):
 //   rojo        vinculada, enviando y el último envío fue aceptado
 //   gris        sin vincular, el último envío falló, o «No enviar»
-//   ámbar/gris  titila mientras se está viendo YouTube Studio fuera del recuento de suscriptores en tiempo real (y
-//               ninguna pestaña está en esa página): así no se envía nada. Sólo en studio.youtube.com
+//   ámbar/gris  titila si la página de Studio no es el recuento de suscriptores en tiempo real (y ninguna pestaña
+//               está en esa página): así no se envía nada
 const BLINK_MS = 600;
 function icons(state) {
   const p = {};
-  for (const n of [16, 32, 48, 128]) p[n] = 'icons/' + n + '-' + state + '.png';
+  for (const n of [16, 32, 48, 128]) p[n] = 'icons/' + n + (state ? '-' + state : '') + '.png';   // sin estado: sin LED
   return p;
 }
 
@@ -29,8 +29,9 @@ async function updateIcon() {
   const s = await chrome.storage.local.get(['refresh', 'lastStatus', 'paused']);
   const pages = Object.values(await getPages());
   const linked = !!s.refresh;
-  const warn = linked && !s.paused && pages.some(p => p.visible && !p.subs) && !pages.some(p => p.subs);
-  const on = linked && !s.paused && s.lastStatus === 200;
+  const studio = pages.some(p => p.visible);   // se está viendo studio.youtube.com
+  const warn = studio && linked && !s.paused && pages.some(p => p.visible && !p.subs) && !pages.some(p => p.subs);
+  const on = studio && linked && !s.paused && s.lastStatus === 200;
   if (warn) {
     if (!blinkTimer) {
       blinkTimer = setInterval(() => { blinkOn = !blinkOn; chrome.action.setIcon({ path: icons(blinkOn ? 'amber' : 'off') }).catch(() => {}); }, BLINK_MS);
@@ -38,9 +39,9 @@ async function updateIcon() {
     }
   } else {
     if (blinkTimer) { clearInterval(blinkTimer); blinkTimer = null; chrome.alarms.clear('blink'); }
-    await chrome.action.setIcon({ path: icons(on ? 'on' : 'off') });
+    await chrome.action.setIcon({ path: icons(!studio ? '' : on ? 'on' : 'off') });
   }
-  await chrome.action.setTitle({ title: 'ICU.Live Shield — ' + (!linked ? 'sin vincular' : s.paused ? 'no envía (pausada)'
+  await chrome.action.setTitle({ title: 'ICU.Live Shield — ' + (!linked ? 'sin vincular' : !studio ? 'funciona en YouTube Studio' : s.paused ? 'no envía (pausada)'
     : warn ? 'abrí Estadísticas → Recuento de suscriptores en tiempo real' : on ? 'enviando suscriptores' : 'vinculada, sin envíos aceptados') });
 }
 const refresh = () => { updateIcon().catch(() => {}); };
@@ -118,9 +119,18 @@ chrome.runtime.onMessage.addListener((msg, sender, reply) => {
     }
     if (msg.type === 'link') return link(String(msg.code || ''));
     if (msg.type === 'unlink') return unlink();
-    if (msg.type === 'pause') { await chrome.storage.local.set({ paused: !!msg.paused }); return { ok: true }; }
-    if (msg.type === 'status') return chrome.storage.local.get(['refresh', 'channel', 'lastAt', 'lastSubs', 'lastStatus', 'lastValid', 'paused'])
-      .then(s => ({ linked: !!s.refresh, channel: s.channel, lastAt: s.lastAt, lastSubs: s.lastSubs, lastStatus: s.lastStatus, lastValid: s.lastValid, paused: !!s.paused }));
+    if (msg.type === 'pause') {
+      // Sólo desde YouTube Studio (Sergio, 07/11/2026)
+      if (!Object.values(await getPages()).some(p => p.visible)) return { ok: false };
+      await chrome.storage.local.set({ paused: !!msg.paused });
+      return { ok: true };
+    }
+    if (msg.type === 'status') {
+      const s = await chrome.storage.local.get(['refresh', 'channel', 'lastAt', 'lastSubs', 'lastStatus', 'lastValid', 'paused']);
+      const studio = Object.values(await getPages()).some(p => p.visible);
+      return { linked: !!s.refresh, channel: s.channel, lastAt: s.lastAt, lastSubs: s.lastSubs, lastStatus: s.lastStatus, lastValid: s.lastValid,
+        paused: !!s.paused, studio };
+    }
     return { ok: false };
   };
   run().then(reply, () => reply({ ok: false }));   // ICU.Live caído: se descarta

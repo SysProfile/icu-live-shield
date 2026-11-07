@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "ICU.Live Shield",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Envía a ICU.Live la cantidad exacta de suscriptores de tu canal que muestra YouTube Studio. Nada más.",
   "homepage_url": "https://icu.live",
   "permissions": [
@@ -18,10 +18,9 @@
     "default_popup": "popup.html",
     "default_title": "ICU.Live Shield",
     "default_icon": {
-      "16": "icons/16-off.png",
-      "32": "icons/32-off.png",
-      "48": "icons/48-off.png",
-      "128": "icons/128-off.png"
+      "16": "icons/16.png",
+      "48": "icons/48.png",
+      "128": "icons/128.png"
     }
   },
   "icons": {

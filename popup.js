@@ -21,6 +21,9 @@ async function show() {
   $('info').appendChild(p);
   $('pause').textContent = s.paused ? 'Enviar' : 'No enviar';
   $('pause').dataset.paused = s.paused ? '1' : '';
+  // Enviar / No enviar sólo se puede tocar estando en YouTube Studio
+  $('pause').disabled = !s.studio;
+  $('pause').title = s.studio ? '' : 'Abrí YouTube Studio para usarlo';
 }
 
 // No enviar / Enviar: deja de mandar los suscriptores sin desvincular (el LED queda gris)

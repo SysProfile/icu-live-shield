@@ -20,6 +20,8 @@ usa y cuyo número coincide con el público lleva el escudo 🛡️ en el monito
 
 ## LED del ícono
 
+Sólo mientras se está viendo YouTube Studio; en cualquier otro sitio el ícono va sin LED y **Enviar / No enviar** no se puede tocar.
+
 - **Rojo:** vinculada y enviando; el último número fue aceptado.
 - **Ámbar y gris titilando:** se está viendo YouTube Studio fuera de *Estadísticas → Recuento de suscriptores en tiempo real*; así no se envía nada.
 - **Gris:** sin vincular, el último envío falló o está en **No enviar**.
