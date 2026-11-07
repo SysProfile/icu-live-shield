@@ -1,0 +1,61 @@
+{
+  "manifest_version": 3,
+  "name": "ICU.Live Shield",
+  "version": "1.0.1",
+  "description": "Envía a ICU.Live la cantidad exacta de suscriptores de tu canal que muestra YouTube Studio. Nada más.",
+  "homepage_url": "https://icu.live",
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "https://cdn.icu.live/shield/*"
+  ],
+  "background": {
+    "service_worker": "bg.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "ICU.Live Shield",
+    "default_icon": {
+      "16": "icons/16-off.png",
+      "32": "icons/32-off.png",
+      "48": "icons/48-off.png",
+      "128": "icons/128-off.png"
+    }
+  },
+  "icons": {
+    "16": "icons/16.png",
+    "48": "icons/48.png",
+    "128": "icons/128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://studio.youtube.com/*"
+      ],
+      "js": [
+        "inject.js"
+      ],
+      "world": "MAIN",
+      "run_at": "document_start"
+    },
+    {
+      "matches": [
+        "https://studio.youtube.com/*"
+      ],
+      "js": [
+        "bridge.js"
+      ],
+      "run_at": "document_start"
+    },
+    {
+      "matches": [
+        "https://cdn.icu.live/shield/vincular.php*"
+      ],
+      "js": [
+        "link-page.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}
