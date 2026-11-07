@@ -18,6 +18,16 @@ usa y cuyo número coincide con el público lleva el escudo 🛡️ en el monito
 2. Lo pega en la extensión, o abre el enlace del QR en el navegador donde la tiene instalada.
 3. ICU.Live sólo acepta los números de YouTube Studio del canal vinculado.
 
+## LED del ícono
+
+- **Rojo:** vinculada y enviando; el último número fue aceptado.
+- **Ámbar y gris titilando:** se está viendo YouTube Studio fuera de *Estadísticas → Recuento de suscriptores en tiempo real*; así no se envía nada.
+- **Gris:** sin vincular, el último envío falló o está en **No enviar**.
+
+## Cómo se pausa
+
+El botón **No enviar** deja de mandar el número sin desvincular la extensión; **Enviar** lo reanuda.
+
 ## Cómo se desvincula
 
 Con el botón **Desvincular** de la extensión, desde el panel de ICU.Live, o desinstalando la extensión.
@@ -26,7 +36,7 @@ Con el botón **Desvincular** de la extensión, desde el panel de ICU.Live, o de
 
 | Archivo | Qué hace |
 |---|---|
-| `manifest.json` | Permisos: `storage` (guardar el vínculo) y `https://cdn.icu.live/shield/*` (enviar el número). |
+| `manifest.json` | Permisos: `storage` (guardar el vínculo), `alarms` (mantener el titileo del LED) y `https://cdn.icu.live/shield/*` (enviar el número). |
 | `inject.js` | Dentro de YouTube Studio: toma el total de suscriptores de la respuesta de Studio. |
 | `bridge.js` | Le pasa ese número a la extensión. |
 | `bg.js` | Guarda el vínculo y envía el número a ICU.Live. |
