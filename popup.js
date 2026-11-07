@@ -46,4 +46,11 @@ $('unlink').addEventListener('click', async () => {
   show();
 });
 
+// Abrir YouTube Studio siempre en una pestaña nueva, sin tocar la que el usuario está viendo
+document.querySelector('a.studio').addEventListener('click', (e) => {
+  e.preventDefault();
+  chrome.tabs.create({ url: 'https://studio.youtube.com', active: true });
+  window.close();
+});
+
 show();
