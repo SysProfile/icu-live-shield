@@ -17,8 +17,17 @@ async function show() {
   } else {
     p.textContent = 'Todavía no envió nada: abrí YouTube Studio, Estadísticas, y el recuento de suscriptores en tiempo real.';
   }
+  if (s.paused) p.textContent = 'No envía: tocá Enviar para volver a mandar tus suscriptores.';
   $('info').appendChild(p);
+  $('pause').textContent = s.paused ? 'Enviar' : 'No enviar';
+  $('pause').dataset.paused = s.paused ? '1' : '';
 }
+
+// No enviar / Enviar: deja de mandar los suscriptores sin desvincular (el LED queda gris)
+$('pause').addEventListener('click', async () => {
+  await chrome.runtime.sendMessage({ type: 'pause', paused: !$('pause').dataset.paused });
+  show();
+});
 
 $('link').addEventListener('click', async () => {
   $('msg').textContent = 'Vinculando…';

@@ -45,6 +45,14 @@
     return send.apply(this, arguments);
   };
 
+  // Studio cambia de página sin recargar: se avisa cada cambio de dirección (para el LED de la extensión)
+  const notify = () => window.postMessage({ __icuShield: 2, href: location.href }, location.origin);
+  for (const fn of ['pushState', 'replaceState']) {
+    const orig = history[fn];
+    history[fn] = function () { const r = orig.apply(this, arguments); notify(); return r; };
+  }
+  window.addEventListener('popstate', notify);
+
   const origFetch = window.fetch;
   window.fetch = function (input, init) {
     const url = typeof input === 'string' ? input : (input && input.url) || '';

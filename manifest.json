@@ -1,11 +1,12 @@
 {
   "manifest_version": 3,
   "name": "ICU.Live Shield",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Envía a ICU.Live la cantidad exacta de suscriptores de tu canal que muestra YouTube Studio. Nada más.",
   "homepage_url": "https://icu.live",
   "permissions": [
-    "storage"
+    "storage",
+    "alarms"
   ],
   "host_permissions": [
     "https://cdn.icu.live/shield/*"
