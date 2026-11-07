@@ -11,6 +11,8 @@
     button:disabled { opacity: .4; cursor: not-allowed; }
     button.danger { border-color: #ff4d4d; background: transparent; color: #ff7a7a; }
     small { color: #888; }
+    a.studio { display: block; margin-top: 10px; text-align: center; color: #3ff29a; font-weight: 700; text-decoration: none; }
+    a.studio:hover { text-decoration: underline; }
     .msg { margin-top: 8px; min-height: 18px; }
     .hidden { display: none; }
   </style>
@@ -29,6 +31,7 @@
   </div>
   <div id="msg" class="msg"></div>
   <small>Sólo envía la cantidad exacta de suscriptores que muestra YouTube Studio. No pide claves ni contraseñas.</small>
+  <a class="studio" href="https://studio.youtube.com" target="_blank" rel="noopener">Abrir YouTube Studio</a>
   <script src="popup.js"></script>
 </body>
 </html>
