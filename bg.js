@@ -19,10 +19,16 @@ function icons(state) {
 // Pestañas de Studio: tabId → { subs: está en el recuento de suscriptores, visible: se está viendo }
 // En storage.session para que no se pierdan si el service worker se reinicia
 async function getPages() { return (await chrome.storage.session.get('pages')).pages || {}; }
-async function setPage(tabId, info) {
-  const pages = await getPages();
-  if (info) pages[tabId] = info; else delete pages[tabId];
-  await chrome.storage.session.set({ pages });
+// De a uno: varias pestañas avisan casi juntas (al tocar Enviar se les pide a todas) y, leyendo y guardando la lista a la
+// vez, una pisaba a la otra; la del recuento quedaba afuera un instante y el LED pasaba a ámbar sin motivo
+let pagesQueue = Promise.resolve();
+function setPage(tabId, info) {
+  pagesQueue = pagesQueue.then(async () => {
+    const pages = await getPages();
+    if (info) pages[tabId] = info; else delete pages[tabId];
+    await chrome.storage.session.set({ pages });
+  }).catch(() => {});
+  return pagesQueue;
 }
 
 let blinkTimer = null, blinkOn = false;
