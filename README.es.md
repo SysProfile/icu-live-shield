@@ -6,6 +6,12 @@ Extensión para Chrome, Edge, Opera y Firefox que le permite al dueño de un can
 **cantidad exacta de suscriptores**, en lugar del número redondeado que YouTube muestra públicamente. Un canal que la
 usa y cuyo número coincide con el público lleva el escudo 🛡️ en el monitor de ICU.Live.
 
+## Instalar
+
+- [Microsoft Edge](https://microsoftedge.microsoft.com/addons/detail/gahhfedaibgfopcddbgijebojbpllodm)
+- [Opera](https://addons.opera.com/extensions/details/iculive-shield/)
+- [Firefox](https://addons.mozilla.org/firefox/addon/icu-live-shield/)
+
 ## ICU.Live
 
 - [icu.live](https://icu.live): el proyecto ICU.Live.

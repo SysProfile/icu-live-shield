@@ -6,6 +6,12 @@ Extension for Chrome, Edge, Opera and Firefox that lets a YouTube channel owner 
 ICU.Live, instead of the rounded number YouTube shows publicly. A channel that uses it, and whose number matches the
 public one, gets the 🛡️ shield on the ICU.Live monitor.
 
+## Install
+
+- [Microsoft Edge](https://microsoftedge.microsoft.com/addons/detail/gahhfedaibgfopcddbgijebojbpllodm)
+- [Opera](https://addons.opera.com/extensions/details/iculive-shield/)
+- [Firefox](https://addons.mozilla.org/firefox/addon/icu-live-shield/)
+
 ## ICU.Live
 
 - [icu.live](https://icu.live) — the ICU.Live project.
