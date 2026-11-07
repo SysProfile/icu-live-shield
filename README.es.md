@@ -6,6 +6,14 @@ Extensión para Chrome, Edge, Opera y Firefox que le permite al dueño de un can
 **cantidad exacta de suscriptores**, en lugar del número redondeado que YouTube muestra públicamente. Un canal que la
 usa y cuyo número coincide con el público lleva el escudo 🛡️ en el monitor de ICU.Live.
 
+## ICU.Live
+
+- [icu.live](https://icu.live): el proyecto ICU.Live.
+- [Monitor](https://monitor.icu.live): la audiencia de los canales en tiempo real, donde se ve el escudo 🛡️.
+- [Manual de uso](https://monitor.icu.live/manual/#monitor-escudo): el escudo y el candado, explicados.
+- [Panel de ICU.Live → Escudo](https://icu.live/admin/shield.php): donde el dueño del canal genera el código de
+  vinculación (requiere un usuario de ICU.Live).
+
 ## Qué hace
 
 - Funciona solamente en **YouTube Studio** (`studio.youtube.com`), en el navegador del dueño del canal.
