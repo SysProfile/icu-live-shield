@@ -9,6 +9,7 @@ const API = 'https://cdn.icu.live/shield/';
 //   ámbar/gris  titila si la página de Studio no es el recuento de suscriptores en tiempo real (y ninguna pestaña
 //               está en esa página): así no se envía nada
 const BLINK_MS = 600;
+const HEARTBEAT_MS = 60000;   // sin cambios, una señal de vida por minuto: ICU.Live apaga el escudo si deja de llegar
 function icons(state) {
   const p = {};
   for (const n of [16, 32, 48, 128]) p[n] = 'icons/' + n + (state ? '-' + state : '') + '.png';   // sin estado: sin LED
@@ -77,7 +78,10 @@ async function accessToken(force) {
 }
 
 async function sendSubs(channel, subscribers) {
-  if ((await chrome.storage.local.get('paused')).paused) return;   // «No enviar»: no sale nada
+  const st = await chrome.storage.local.get(['paused', 'lastSubs', 'lastAt', 'lastStatus']);
+  if (st.paused) return;   // «No enviar»: no sale nada
+  // Mismo número: sólo como señal de vida cada HEARTBEAT_MS (Studio consulta cada 10 s)
+  if (st.lastSubs === subscribers && st.lastStatus === 200 && Date.now() - (st.lastAt || 0) < HEARTBEAT_MS) return;
   let r;
   try {
     let access = await accessToken(false);
@@ -114,7 +118,11 @@ chrome.runtime.onMessage.addListener((msg, sender, reply) => {
   const run = async () => {
     if (msg.type === 'subs') { await sendSubs(msg.channel, msg.subscribers); return { ok: true }; }
     if (msg.type === 'page') {
-      if (sender.tab) await setPage(sender.tab.id, msg.gone ? null : { subs: !!msg.subs, visible: !!msg.visible });
+      if (sender.tab) {
+        await setPage(sender.tab.id, msg.gone ? null : { subs: !!msg.subs, visible: !!msg.visible });
+        // Que el navegador no duerma (descarte) la pestaña del recuento de suscriptores mientras está en esa página
+        if (!msg.gone) chrome.tabs.update(sender.tab.id, { autoDiscardable: !msg.subs }).catch(() => {});
+      }
       await updateIcon();
       return { ok: true };
     }
@@ -123,7 +131,9 @@ chrome.runtime.onMessage.addListener((msg, sender, reply) => {
     if (msg.type === 'pause') {
       // Sólo desde YouTube Studio (Sergio, 07/11/2026)
       if (!Object.values(await getPages()).some(p => p.visible)) return { ok: false };
-      await chrome.storage.local.set({ paused: !!msg.paused });
+      await chrome.storage.local.set({ paused: !!msg.paused, lastStatus: null });
+      // Se avisa a ICU.Live para que el escudo se apague (o vuelva) en el monitor en el momento
+      try { const access = await accessToken(false); if (access) await post('pause.php', { paused: !!msg.paused }, access); } catch (e) { /* sin conexión */ }
       return { ok: true };
     }
     if (msg.type === 'status') {

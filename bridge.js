@@ -18,4 +18,7 @@ window.addEventListener('message', (e) => {
 });
 document.addEventListener('visibilitychange', () => page());
 window.addEventListener('pagehide', () => { chrome.runtime.sendMessage({ type: 'page', gone: true }).catch(() => {}); });
+// Pestaña dormida por el navegador (Page Lifecycle): congelada no envía; al despertar vuelve a avisar
+document.addEventListener('freeze', () => { chrome.runtime.sendMessage({ type: 'page', gone: true }).catch(() => {}); });
+document.addEventListener('resume', () => page());
 page();

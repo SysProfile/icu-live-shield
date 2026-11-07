@@ -1,12 +1,12 @@
 // ICU.Live Shield — inject.js (corre dentro de la página de YouTube Studio)
 // No hace ningún pedido propio: mira las respuestas que YouTube Studio ya recibe. Cuando Studio consulta el recuento de
 // suscriptores (youtubei/v1/yta_web/join, tarjeta cumulativeSubscribersCardData), toma el total exacto (lifetimeTotal)
-// y el canal de la consulta (screenConfig.entity.channelId) y, si el número cambió, se lo pasa a la extensión.
+// y el canal de la consulta (screenConfig.entity.channelId) y se lo pasa a la extensión en cada consulta: la extensión
+// envía cuando cambia y, si no cambia, una señal de vida cada tanto (así ICU.Live sabe que la pestaña sigue despierta).
 // Sin temporizadores: sólo reacciona a lo que la página ya hace.
 (() => {
   'use strict';
   const MARK = 'yta_web/join';
-  let last = null;
 
   function find(obj, key, depth) {
     if (!obj || typeof obj !== 'object' || depth > 12) return undefined;
@@ -27,9 +27,6 @@
       const entity = req ? find(req, 'entity', 0) : null;
       const channel = entity && entity.channelId;
       if (!Number.isSafeInteger(total) || total < 0 || typeof channel !== 'string' || !/^UC[\w-]{22}$/.test(channel)) return;
-      const key = channel + ':' + total;
-      if (key === last) return;
-      last = key;
       window.postMessage({ __icuShield: 1, channel, subscribers: total }, location.origin);
     } catch (e) { /* respuesta que no es la esperada: se ignora */ }
   }

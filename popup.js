@@ -13,9 +13,10 @@ async function show() {
   $('linked').classList.toggle('hidden', !s.linked);
   $('unlinked').classList.toggle('hidden', !!s.linked);
   if (!s.linked) return;
-  let t = 'Vinculada' + (s.channel ? ' con <b></b>' : '') + '.<br>';
-  $('info').innerHTML = t;
-  if (s.channel) $('info').querySelector('b').textContent = s.channel;
+  $('info').textContent = '';
+  $('info').append('Vinculada' + (s.channel ? ' con ' : ''));
+  if (s.channel) { const b = document.createElement('b'); b.textContent = s.channel; $('info').append(b); }
+  $('info').append('.');
   const p = document.createElement('div');
   if (s.lastAt) {
     p.textContent = 'Último envío: ' + new Date(s.lastAt).toLocaleString('es-AR') + ' — ' + fmt(s.lastSubs) + ' suscriptores' +

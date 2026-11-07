@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "ICU.Live Shield",
-  "version": "1.0.7",
+  "version": "1.0.9",
   "description": "Envía a ICU.Live la cantidad exacta de suscriptores de tu canal que muestra YouTube Studio. Nada más.",
   "homepage_url": "https://icu.live",
   "permissions": [
@@ -12,7 +12,10 @@
     "https://cdn.icu.live/shield/*"
   ],
   "background": {
-    "service_worker": "bg.js"
+    "service_worker": "bg.js",
+    "scripts": [
+      "bg.js"
+    ]
   },
   "action": {
     "default_popup": "popup.html",
@@ -57,5 +60,16 @@
       ],
       "run_at": "document_idle"
     }
-  ]
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "shield@icu.live",
+      "strict_min_version": "128.0",
+      "data_collection_permissions": {
+        "required": [
+          "websiteContent"
+        ]
+      }
+    }
+  }
 }
