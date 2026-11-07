@@ -127,6 +127,9 @@ chrome.runtime.onMessage.addListener((msg, sender, reply) => {
       return { ok: true };
     }
     if (msg.type === 'status') {
+      // Vinculada antes de que el servidor mandara el ID del canal: se renueva el token una vez para tenerlo
+      const pre = await chrome.storage.local.get(['refresh', 'channelYt']);
+      if (pre.refresh && !pre.channelYt) { try { await accessToken(true); } catch (e) { /* sin conexión: queda el portal */ } }
       const s = await chrome.storage.local.get(['refresh', 'channel', 'channelYt', 'lastAt', 'lastSubs', 'lastStatus', 'lastValid', 'paused']);
       const studio = Object.values(await getPages()).some(p => p.visible);
       return { linked: !!s.refresh, channel: s.channel, lastAt: s.lastAt, lastSubs: s.lastSubs, lastStatus: s.lastStatus, lastValid: s.lastValid,
