@@ -26,6 +26,12 @@ Sólo mientras se está viendo YouTube Studio; en cualquier otro sitio el ícono
 - **Ámbar y gris titilando:** se está viendo YouTube Studio fuera de *Estadísticas → Recuento de suscriptores en tiempo real*; así no se envía nada.
 - **Gris:** sin vincular, el último envío falló o está en **No enviar**.
 
+## Pestaña despierta
+
+Mientras la pestaña está en el recuento de suscriptores y la extensión envía, la extensión le pide al navegador que no
+la descarte y toma un *Web Lock* para que no la congele. Si igual se duerme, ICU.Live apaga el escudo a los 3 minutos
+sin datos.
+
 ## Cómo se pausa
 
 El botón **No enviar** deja de mandar el número sin desvincular la extensión; **Enviar** lo reanuda.

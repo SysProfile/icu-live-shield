@@ -52,6 +52,11 @@ chrome.storage.onChanged.addListener(refresh);
 chrome.alarms.onAlarm.addListener(refresh);
 chrome.tabs.onRemoved.addListener((tabId) => { setPage(tabId, null).then(refresh); });
 
+// Pide a las pestañas de Studio que vuelvan a avisar su estado (para tomar o soltar el Web Lock que las mantiene despiertas)
+async function recheckTabs() {
+  for (const id of Object.keys(await getPages())) chrome.tabs.sendMessage(Number(id), { type: 'recheck' }).catch(() => {});
+}
+
 async function post(path, body, access) {
   const headers = { 'Content-Type': 'application/json' };
   if (access) headers.Authorization = 'Bearer ' + access;
@@ -104,6 +109,7 @@ async function link(code) {
   if (r.status !== 200 || !r.body.ok) return { ok: false };
   await chrome.storage.local.clear();
   await saveTokens(r.body);
+  await recheckTabs();
   return { ok: true, channel: r.body.channel };
 }
 
@@ -111,6 +117,7 @@ async function unlink() {
   const access = await accessToken(false);
   if (access) { try { await post('unlink.php', {}, access); } catch (e) { /* igual se borra acá */ } }
   await chrome.storage.local.clear();
+  await recheckTabs();
   return { ok: true };
 }
 
@@ -124,7 +131,9 @@ chrome.runtime.onMessage.addListener((msg, sender, reply) => {
         if (!msg.gone) chrome.tabs.update(sender.tab.id, { autoDiscardable: !msg.subs }).catch(() => {});
       }
       await updateIcon();
-      return { ok: true };
+      // sending: vinculada y sin «No enviar» (la pestaña del recuento se mantiene despierta)
+      const st = await chrome.storage.local.get(['refresh', 'paused']);
+      return { ok: true, sending: !!st.refresh && !st.paused };
     }
     if (msg.type === 'link') return link(String(msg.code || ''));
     if (msg.type === 'unlink') return unlink();
@@ -134,6 +143,7 @@ chrome.runtime.onMessage.addListener((msg, sender, reply) => {
       await chrome.storage.local.set({ paused: !!msg.paused, lastStatus: null });
       // Se avisa a ICU.Live para que el escudo se apague (o vuelva) en el monitor en el momento
       try { const access = await accessToken(false); if (access) await post('pause.php', { paused: !!msg.paused }, access); } catch (e) { /* sin conexión */ }
+      await recheckTabs();
       return { ok: true };
     }
     if (msg.type === 'status') {

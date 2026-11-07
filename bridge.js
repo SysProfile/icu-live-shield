@@ -4,9 +4,23 @@
 // en ámbar para avisar que así no se envía nada. Sin temporizadores: sólo eventos de la página.
 const isSubsPage = (href) => /[?&]explore_type=SUBSCRIBERS\b/.test(href);
 
-function page(href) {
-  chrome.runtime.sendMessage({ type: 'page', subs: isSubsPage(href || location.href), visible: document.visibilityState === 'visible' }).catch(() => {});
+// Que el navegador no duerma (congele) esta pestaña mientras está en el recuento y la extensión envía: Chrome no congela
+// una página que tiene un Web Lock tomado (Sergio, 07/11/2026: «no permitir que se apague la ventana que está enviando»).
+// Se suelta al salir del recuento o con «No enviar». El descarte de la pestaña lo evita la extensión (autoDiscardable).
+let releaseLock = null;
+function keepAwake(on) {
+  if (on && !releaseLock && navigator.locks) {
+    navigator.locks.request('icu-shield-' + Math.random().toString(36).slice(2), () => new Promise((resolve) => { releaseLock = resolve; })).catch(() => {});
+  } else if (!on && releaseLock) { releaseLock(); releaseLock = null; }
 }
+
+function page(href) {
+  const subs = isSubsPage(href || location.href);
+  chrome.runtime.sendMessage({ type: 'page', subs, visible: document.visibilityState === 'visible' })
+    .then((r) => keepAwake(subs && r && r.sending)).catch(() => {});
+}
+// La extensión avisa cuando se toca «Enviar» / «No enviar» o se vincula o desvincula
+chrome.runtime.onMessage.addListener((m) => { if (m && m.type === 'recheck') page(); });
 
 window.addEventListener('message', (e) => {
   if (e.source !== window || e.origin !== location.origin) return;
