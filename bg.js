@@ -6,6 +6,7 @@ const API = 'https://cdn.icu.live/shield/';
 // LED del ícono, sólo mientras se está viendo studio.youtube.com (en cualquier otro sitio, el ícono va sin LED):
 //   rojo        vinculada, enviando y el último envío fue aceptado
 //   gris        sin vincular, el último envío falló, o «No enviar»
+//   ámbar       fijo mientras conecta, después de tocar «Enviar» (pasa a rojo cuando ICU.Live acepta el dato)
 //   ámbar/gris  titila si la página de Studio no es el recuento de suscriptores en tiempo real (y ninguna pestaña
 //               está en esa página): así no se envía nada
 const BLINK_MS = 600;
@@ -46,7 +47,9 @@ async function updateIcon() {
     }
   } else {
     if (blinkTimer) { clearInterval(blinkTimer); blinkTimer = null; chrome.alarms.clear('blink'); }
-    await chrome.action.setIcon({ path: icons(!studio ? '' : on ? 'on' : 'off') });
+    // Ámbar fijo: se tocó «Enviar» y está conectando (hasta que ICU.Live acepta el próximo dato de Studio)
+    const connecting = studio && linked && !s.paused && s.lastStatus === 'waiting';
+    await chrome.action.setIcon({ path: icons(!studio ? '' : on ? 'on' : connecting ? 'amber' : 'off') });
   }
   await chrome.action.setTitle({ title: 'ICU.Live Shield — ' + (!linked ? 'sin vincular' : !studio ? 'funciona en YouTube Studio' : s.paused ? 'no envía (pausada)'
     : warn ? 'abrí Estadísticas → Recuento de suscriptores en tiempo real' : on ? 'enviando suscriptores'

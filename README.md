@@ -24,6 +24,7 @@ Sólo mientras se está viendo YouTube Studio; en cualquier otro sitio el ícono
 
 - **Rojo:** vinculada y enviando; el último número fue aceptado.
 - **Ámbar y gris titilando:** se está viendo YouTube Studio fuera de *Estadísticas → Recuento de suscriptores en tiempo real*; así no se envía nada.
+- **Ámbar fijo:** conectando, después de tocar **Enviar**; pasa a rojo cuando ICU.Live acepta el dato.
 - **Gris:** sin vincular, el último envío falló o está en **No enviar**.
 
 ## Pestaña despierta
