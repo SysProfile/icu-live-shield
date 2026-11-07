@@ -18,13 +18,23 @@ async function show() {
   if (s.channel) { const b = document.createElement('b'); b.textContent = s.channel; $('info').append(b); }
   $('info').append('.');
   const p = document.createElement('div');
-  if (s.lastAt) {
-    p.textContent = 'Último envío: ' + new Date(s.lastAt).toLocaleString('es-AR') + ' — ' + fmt(s.lastSubs) + ' suscriptores' +
-      (s.lastStatus === 200 ? (s.lastValid ? ' (escudo activo)' : ' (todavía no coincide con el número público)') : ' (ICU.Live no lo aceptó)');
+  // Un texto por estado, el mismo que muestra el LED
+  const STATUS = {
+    200: s.lastValid ? 'enviado, escudo activo' : 'enviado, pero todavía no coincide con el número público',
+    0: 'sin conexión con ICU.Live: se descartó',
+    403: 'el canal abierto en YouTube Studio no es el vinculado',
+    401: 'el vínculo venció: vinculá de nuevo'
+  };
+  if (s.paused) {
+    p.textContent = 'No envía. Tocá Enviar para volver a mandar tus suscriptores.';
+  } else if (s.lastStatus === 'waiting') {
+    p.textContent = 'Enviando de nuevo: esperando el próximo dato de YouTube Studio (unos 10 segundos).';
+  } else if (s.lastAt) {
+    p.textContent = 'Último envío: ' + new Date(s.lastAt).toLocaleString('es-AR') + ' — ' + fmt(s.lastSubs) + ' suscriptores (' +
+      (STATUS[s.lastStatus] || ('ICU.Live no lo aceptó, código ' + s.lastStatus)) + ').';
   } else {
-    p.textContent = 'Todavía no envió nada: abrí YouTube Studio, Estadísticas, y el recuento de suscriptores en tiempo real.';
+    p.textContent = 'Todavía no envió nada: abrí el recuento de suscriptores en tiempo real de YouTube Studio.';
   }
-  if (s.paused) p.textContent = 'No envía: tocá Enviar para volver a mandar tus suscriptores.';
   $('info').appendChild(p);
   $('pause').textContent = s.paused ? 'Enviar' : 'No enviar';
   $('pause').dataset.paused = s.paused ? '1' : '';
@@ -35,9 +45,12 @@ async function show() {
 
 // No enviar / Enviar: deja de mandar los suscriptores sin desvincular (el LED queda gris)
 $('pause').addEventListener('click', async () => {
+  $('pause').disabled = true;   // un solo toque por vez: el botón cambia de texto cuando la acción terminó
   await chrome.runtime.sendMessage({ type: 'pause', paused: !$('pause').dataset.paused });
   show();
 });
+// El estado cambia solo (llega un envío, vence, se pausa): la ventana abierta se actualiza
+chrome.storage.onChanged.addListener(() => show());
 
 $('link').addEventListener('click', async () => {
   $('msg').textContent = 'Vinculando…';

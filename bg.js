@@ -43,7 +43,8 @@ async function updateIcon() {
     await chrome.action.setIcon({ path: icons(!studio ? '' : on ? 'on' : 'off') });
   }
   await chrome.action.setTitle({ title: 'ICU.Live Shield — ' + (!linked ? 'sin vincular' : !studio ? 'funciona en YouTube Studio' : s.paused ? 'no envía (pausada)'
-    : warn ? 'abrí Estadísticas → Recuento de suscriptores en tiempo real' : on ? 'enviando suscriptores' : 'vinculada, sin envíos aceptados') });
+    : warn ? 'abrí Estadísticas → Recuento de suscriptores en tiempo real' : on ? 'enviando suscriptores'
+    : s.lastStatus === 'waiting' ? 'esperando el próximo dato de YouTube Studio' : 'el último envío no se aceptó') });
 }
 const refresh = () => { updateIcon().catch(() => {}); };
 chrome.runtime.onStartup.addListener(refresh);
@@ -140,7 +141,8 @@ chrome.runtime.onMessage.addListener((msg, sender, reply) => {
     if (msg.type === 'pause') {
       // Sólo desde YouTube Studio (Sergio, 07/11/2026)
       if (!Object.values(await getPages()).some(p => p.visible)) return { ok: false };
-      await chrome.storage.local.set({ paused: !!msg.paused, lastStatus: null });
+      // Al pausar: gris. Al reanudar: «esperando» hasta que llegue el próximo dato de Studio (cada 10 s) y se acepte
+      await chrome.storage.local.set({ paused: !!msg.paused, lastStatus: msg.paused ? 'paused' : 'waiting' });
       // Se avisa a ICU.Live para que el escudo se apague (o vuelva) en el monitor en el momento
       try { const access = await accessToken(false); if (access) await post('pause.php', { paused: !!msg.paused }, access); } catch (e) { /* sin conexión */ }
       await recheckTabs();
