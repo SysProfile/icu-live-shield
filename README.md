@@ -1,68 +1,76 @@
 # ICU.Live Shield
 
-Extensión para Chrome, Edge, Opera y Firefox que le permite al dueño de un canal de YouTube mostrar en ICU.Live su
-**cantidad exacta de suscriptores**, en lugar del número redondeado que YouTube muestra públicamente. Un canal que la
-usa y cuyo número coincide con el público lleva el escudo 🛡️ en el monitor de ICU.Live.
+**English** · [Español](README.es.md)
 
-## Qué hace
+Extension for Chrome, Edge, Opera and Firefox that lets a YouTube channel owner show their **exact subscriber count** on
+ICU.Live, instead of the rounded number YouTube shows publicly. A channel that uses it, and whose number matches the
+public one, gets the 🛡️ shield on the ICU.Live monitor.
 
-- Funciona solamente en **YouTube Studio** (`studio.youtube.com`), en el navegador del dueño del canal.
-- No hace pedidos propios a YouTube: mira la respuesta que YouTube Studio ya recibe cuando muestra el recuento de
-  suscriptores y toma **sólo** dos datos: el total de suscriptores y el ID del canal (`UC…`).
-- Cuando el número cambia, lo envía a `https://cdn.icu.live/shield/`. Si ICU.Live no responde, el dato se descarta.
-- No lee ningún otro dato del canal ni de la cuenta de Google, ni otras páginas. No pide claves ni contraseñas.
+## What it does
 
-## Cómo se vincula
+- It only works on **YouTube Studio** (`studio.youtube.com`), in the channel owner's browser.
+- It makes no requests of its own to YouTube: it reads the response YouTube Studio already receives when it shows the
+  subscriber count and takes **only** two values: the subscriber total and the channel ID (`UC…`).
+- When the number changes, it sends it to `https://cdn.icu.live/shield/`; if it does not change, it sends a heartbeat
+  once a minute. If ICU.Live does not respond, the value is discarded.
+- It reads no other data from the channel or the Google account, and no other pages. It never asks for keys or
+  passwords.
 
-1. En el panel de ICU.Live, en **Escudo**, el dueño del canal genera un código de vinculación (vence a los 15 minutos).
-2. Lo pega en la extensión, o abre el enlace del QR en el navegador donde la tiene instalada.
-3. ICU.Live sólo acepta los números de YouTube Studio del canal vinculado.
+## How to link it
 
-## LED del ícono
+1. In the ICU.Live panel, under **Shield**, the channel owner generates a linking code (it expires after 15 minutes).
+2. They paste it into the extension, or open the QR link in the browser where the extension is installed.
+3. ICU.Live only accepts YouTube Studio counts from the linked channel.
 
-Sólo mientras se está viendo YouTube Studio; en cualquier otro sitio el ícono va sin LED y **Enviar / No enviar** no se puede tocar.
+## Icon LED
 
-- **Rojo:** vinculada y enviando; el último número fue aceptado.
-- **Ámbar y gris titilando:** se está viendo YouTube Studio fuera de *Estadísticas → Recuento de suscriptores en tiempo real*; así no se envía nada.
-- **Ámbar fijo:** conectando, después de tocar **Enviar**; pasa a rojo cuando ICU.Live acepta el dato.
-- **Gris:** sin vincular, el último envío falló o está en **No enviar**.
+Only while YouTube Studio is being viewed; on any other site the icon has no LED and **Send / Stop sending** cannot be
+used.
 
-## Pestaña despierta
+- **Red:** linked and sending; the last count was accepted.
+- **Blinking amber and gray:** YouTube Studio is open outside *Analytics → Real-time subscriber count*; nothing is sent
+  that way.
+- **Steady amber:** connecting, after tapping **Send**; it turns red once ICU.Live accepts the value.
+- **Gray:** not linked, the last send failed, or **Stop sending** is on.
 
-Mientras la pestaña está en el recuento de suscriptores y la extensión envía, la extensión le pide al navegador que no
-la descarte y toma un *Web Lock* para que no la congele. Si igual se duerme, ICU.Live apaga el escudo a los 3 minutos
-sin datos.
+## Keeping the tab awake
 
-## Cómo se pausa
+While the tab is on the subscriber count and the extension is sending, the extension asks the browser not to discard
+it and holds a *Web Lock* so it is not frozen. If it falls asleep anyway, ICU.Live turns the shield off after 3 minutes
+without data.
 
-El botón **No enviar** deja de mandar el número sin desvincular la extensión; **Enviar** lo reanuda.
+## How to pause it
 
-## Cómo se desvincula
+The **Stop sending** button stops sending the count without unlinking the extension; **Send** resumes it.
 
-Con el botón **Desvincular** de la extensión, desde el panel de ICU.Live, o desinstalando la extensión.
+## How to unlink it
 
-## Archivos
+With the extension's **Unlink** button, from the ICU.Live panel, or by uninstalling the extension.
 
-| Archivo | Qué hace |
+## Languages
+
+52 languages in `_locales/` (those of the Chrome, Edge, Opera and Firefox stores). It uses the browser language; the
+window's language menu lets you choose another one (for example, a foreigner on a browser set to Spanish).
+
+## Files
+
+| File | What it does |
 |---|---|
-| `manifest.json`, `manifest.firefox.json` | Chromium y Firefox. Permisos: `storage` (guardar el vínculo), `alarms` (mantener el titileo del LED) y `https://cdn.icu.live/shield/*` (enviar el número). |
-| `inject.js` | Dentro de YouTube Studio: toma el total de suscriptores de la respuesta de Studio. |
-| `bridge.js` | Le pasa ese número a la extensión. |
-| `bg.js` | Guarda el vínculo y envía el número a ICU.Live. |
-| `link-page.js` | Vincula la extensión desde el enlace del QR. |
-| `popup.html`, `popup.js` | Ventana de la extensión: vincular, estado y desvincular. |
+| `manifest.json`, `manifest.firefox.json` | Chromium and Firefox. Permissions: `storage` (keep the link), `alarms` (keep the LED blinking) and `https://cdn.icu.live/shield/*` (send the count). |
+| `inject.js` | Inside YouTube Studio: takes the subscriber total from Studio's response. |
+| `bridge.js` | Passes that number to the extension and keeps the tab awake. |
+| `bg.js` | Keeps the link and sends the count to ICU.Live. |
+| `link-page.js` | Links the extension from the QR link. |
+| `popup.html`, `popup.js` | Extension window: link, status, pause, language and unlink. |
+| `i18n.js`, `_locales/` | Texts in each language. |
+| `build.ps1` | Builds the store packages (not part of the extension). |
 
-## Idiomas
+## Packages
 
-52 idiomas en `_locales/` (los de las tiendas de Chrome, Edge, Opera y Firefox). Toma el idioma del navegador; el combo de
-la ventana permite elegir otro (por ejemplo, un extranjero con un navegador en español). Base: español (`es`), inglés (`en`).
+`manifest.json` is for Chrome, Edge and Opera (Chromium). Firefox uses `manifest.firefox.json`.
+`powershell -ExecutionPolicy Bypass -File build.ps1` builds one zip for each in `dist/`, ready to upload to its store.
 
-## Paquetes
+## License
 
-`manifest.json` es el de Chrome, Edge y Opera (Chromium). Firefox usa `manifest.firefox.json`. `python build.py` arma en
-`dist/` un zip para cada uno, listo para subir a su tienda.
-
-## Licencia
-
-Código publicado para que cualquiera pueda revisar qué hace. Todos los derechos reservados: ver [LICENSE](LICENSE).
-Las sugerencias son bienvenidas como *issues*.
+The source code is published so anyone can review what it does. All rights reserved: see [LICENSE](LICENSE).
+Suggestions are welcome as *issues*.
