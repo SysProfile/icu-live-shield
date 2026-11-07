@@ -4,6 +4,12 @@ const fmt = (n) => Number(n).toLocaleString('es-AR');
 
 async function show() {
   const s = await chrome.runtime.sendMessage({ type: 'status' });
+  if (s.channelYt) {
+    const uc = encodeURIComponent(s.channelYt);
+    studioUrl = 'https://studio.youtube.com/channel/' + uc + '/analytics/tab-overview/period-default/explore?entity_type=CHANNEL&entity_id=' +
+      uc + '&time_period=4_weeks&explore_type=SUBSCRIBERS';
+    document.querySelector('a.studio').textContent = 'Abrir el recuento de suscriptores en YouTube Studio';
+  }
   $('linked').classList.toggle('hidden', !s.linked);
   $('unlinked').classList.toggle('hidden', !!s.linked);
   if (!s.linked) return;
@@ -47,9 +53,11 @@ $('unlink').addEventListener('click', async () => {
 });
 
 // Abrir YouTube Studio siempre en una pestaña nueva, sin tocar la que el usuario está viendo
+// Con el canal vinculado: directo al recuento de suscriptores en tiempo real de ese canal (lo que la extensión lee)
+let studioUrl = 'https://studio.youtube.com';
 document.querySelector('a.studio').addEventListener('click', (e) => {
   e.preventDefault();
-  chrome.tabs.create({ url: 'https://studio.youtube.com', active: true });
+  chrome.tabs.create({ url: studioUrl, active: true });
   window.close();
 });
 

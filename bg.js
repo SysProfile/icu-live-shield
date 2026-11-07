@@ -61,7 +61,8 @@ async function post(path, body, access) {
 }
 
 async function saveTokens(b) {
-  await chrome.storage.local.set({ access: b.access, accessExp: Date.now() + (b.expires_in - 30) * 1000, refresh: b.refresh, channel: b.channel || null });
+  await chrome.storage.local.set({ access: b.access, accessExp: Date.now() + (b.expires_in - 30) * 1000, refresh: b.refresh, channel: b.channel || null,
+    channelYt: /^UC[\w-]{22}$/.test(b.channel_yt || '') ? b.channel_yt : null });
 }
 
 async function accessToken(force) {
@@ -126,10 +127,10 @@ chrome.runtime.onMessage.addListener((msg, sender, reply) => {
       return { ok: true };
     }
     if (msg.type === 'status') {
-      const s = await chrome.storage.local.get(['refresh', 'channel', 'lastAt', 'lastSubs', 'lastStatus', 'lastValid', 'paused']);
+      const s = await chrome.storage.local.get(['refresh', 'channel', 'channelYt', 'lastAt', 'lastSubs', 'lastStatus', 'lastValid', 'paused']);
       const studio = Object.values(await getPages()).some(p => p.visible);
       return { linked: !!s.refresh, channel: s.channel, lastAt: s.lastAt, lastSubs: s.lastSubs, lastStatus: s.lastStatus, lastValid: s.lastValid,
-        paused: !!s.paused, studio };
+        paused: !!s.paused, studio, channelYt: s.channelYt || null };
     }
     return { ok: false };
   };
