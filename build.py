@@ -4,7 +4,7 @@ Uso: python build.py"""
 import json, os, zipfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-FILES = ['bg.js', 'bridge.js', 'inject.js', 'link-page.js', 'popup.html', 'popup.js', 'LICENSE', 'README.md']
+FILES = ['i18n.js', 'bg.js', 'bridge.js', 'inject.js', 'link-page.js', 'popup.html', 'popup.js', 'LICENSE', 'README.md']
 version = json.load(open(os.path.join(HERE, 'manifest.json'), encoding='utf-8'))['version']
 os.makedirs(os.path.join(HERE, 'dist'), exist_ok=True)
 for target, manifest in (('chromium', 'manifest.json'), ('firefox', 'manifest.firefox.json')):
@@ -15,4 +15,7 @@ for target, manifest in (('chromium', 'manifest.json'), ('firefox', 'manifest.fi
             z.write(os.path.join(HERE, f), f)
         for f in sorted(os.listdir(os.path.join(HERE, 'icons'))):
             z.write(os.path.join(HERE, 'icons', f), 'icons/' + f)
+        # Idiomas: _locales/<idioma>/messages.json (el navegador elige el suyo; si no está, español)
+        for loc in sorted(os.listdir(os.path.join(HERE, '_locales'))):
+            z.write(os.path.join(HERE, '_locales', loc, 'messages.json'), f'_locales/{loc}/messages.json')
     print(out)

@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
   <meta charset="UTF-8" />
   <style>
     body { width: 300px; margin: 0; padding: 14px; background: #050807; color: #e0e0e0; font: 14px/1.5 Arial, sans-serif; }
-    h1 { margin: 0 0 8px; font-size: 16px; color: #3ff29a; }
+    h1 { margin: 0 0 8px; font-size: 16px; color: #3ff29a; display: flex; align-items: center; gap: 6px; }
+    h1 span { flex: 1; }
+    select { background: #0a1410; color: #e0e0e0; border: 1px solid #22352c; border-radius: 6px; padding: 2px 4px; font-size: 12px; max-width: 130px; }
     input { width: 100%; box-sizing: border-box; padding: 8px; font: 700 16px monospace; letter-spacing: 2px; text-transform: uppercase;
             background: #0a1410; color: #fff; border: 1px solid #22352c; border-radius: 6px; }
     button { width: 100%; margin-top: 8px; padding: 8px; border-radius: 6px; border: 1px solid #3ff29a; background: rgba(63,242,154,.1); color: #3ff29a; font-weight: 700; cursor: pointer; }
@@ -18,20 +20,22 @@
   </style>
 </head>
 <body>
-  <h1>🛡️ ICU.Live Shield</h1>
+  <!-- Los textos salen de _locales: data-i18n = clave de messages.json. El combo cambia el idioma (por defecto, el del navegador) -->
+  <h1><span>🛡️ ICU.Live Shield</span><select id="lang" title="🌐"></select></h1>
   <div id="linked" class="hidden">
     <div id="info"></div>
-    <button id="pause">No enviar</button>
-    <button id="unlink" class="danger">Desvincular</button>
+    <button id="pause" data-i18n="btnPause"></button>
+    <button id="unlink" class="danger" data-i18n="btnUnlink"></button>
   </div>
   <div id="unlinked" class="hidden">
-    <div>Pegá el código que generaste en el panel de ICU.Live, en <b>Escudo</b>.</div>
+    <div data-i18n="pasteCode"></div>
     <input id="code" maxlength="9" placeholder="XXXX-XXXX" autocomplete="off" />
-    <button id="link">Vincular</button>
+    <button id="link" data-i18n="btnLink"></button>
   </div>
   <div id="msg" class="msg"></div>
-  <small>Sólo envía la cantidad exacta de suscriptores que muestra YouTube Studio. No pide claves ni contraseñas.</small>
-  <a class="studio" href="https://studio.youtube.com" target="_blank" rel="noopener">Abrir YouTube Studio</a>
+  <small data-i18n="footer"></small>
+  <a class="studio" href="https://studio.youtube.com" target="_blank" rel="noopener" data-i18n="openStudio"></a>
+  <script src="i18n.js"></script>
   <script src="popup.js"></script>
 </body>
 </html>

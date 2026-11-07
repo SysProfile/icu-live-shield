@@ -52,6 +52,11 @@ Con el botón **Desvincular** de la extensión, desde el panel de ICU.Live, o de
 | `link-page.js` | Vincula la extensión desde el enlace del QR. |
 | `popup.html`, `popup.js` | Ventana de la extensión: vincular, estado y desvincular. |
 
+## Idiomas
+
+52 idiomas en `_locales/` (los de las tiendas de Chrome, Edge, Opera y Firefox). Toma el idioma del navegador; el combo de
+la ventana permite elegir otro (por ejemplo, un extranjero con un navegador en español). Base: español (`es`), inglés (`en`).
+
 ## Paquetes
 
 `manifest.json` es el de Chrome, Edge y Opera (Chromium). Firefox usa `manifest.firefox.json`. `python build.py` arma en

@@ -1,6 +1,8 @@
 // ICU.Live Shield — bg.js (service worker)
 // Guarda los tokens del vínculo y envía a ICU.Live cada cambio de suscriptores. Si ICU.Live no responde, el dato se
 // descarta: no se guarda para reenviar. No contiene ninguna clave: el vínculo se hace con un código de un solo uso.
+// Firefox carga i18n.js antes (manifest.firefox.json: background.scripts); Chrome, con importScripts
+if (typeof icuT === 'undefined' && typeof importScripts === 'function') importScripts('i18n.js');
 const API = 'https://cdn.icu.live/shield/';
 
 // LED del ícono, sólo mientras se está viendo studio.youtube.com (en cualquier otro sitio, el ícono va sin LED):
@@ -51,9 +53,11 @@ async function updateIcon() {
     const connecting = studio && linked && !s.paused && s.lastStatus === 'waiting';
     await chrome.action.setIcon({ path: icons(!studio ? '' : on ? 'on' : connecting ? 'amber' : 'off') });
   }
-  await chrome.action.setTitle({ title: 'ICU.Live Shield — ' + (!linked ? 'sin vincular' : !studio ? 'funciona en YouTube Studio' : s.paused ? 'no envía (pausada)'
-    : warn ? 'abrí Estadísticas → Recuento de suscriptores en tiempo real' : on ? 'enviando suscriptores'
-    : s.lastStatus === 'waiting' ? 'esperando el próximo dato de YouTube Studio' : 'el último envío no se aceptó') });
+  // Texto al pasar el mouse por el ícono, en el idioma del navegador (_locales)
+  const key = !linked ? 'tUnlinked' : !studio ? 'tNotStudio' : s.paused ? 'tPaused' : warn ? 'tWarn' : on ? 'tSending'
+    : s.lastStatus === 'waiting' ? 'tWaiting' : 'tRejected';
+  await icuLoadLang();   // el idioma elegido en el combo (puede haber cambiado)
+  await chrome.action.setTitle({ title: 'ICU.Live Shield — ' + icuT(key) });
 }
 const refresh = () => { updateIcon().catch(() => {}); };
 chrome.runtime.onStartup.addListener(refresh);
@@ -65,6 +69,13 @@ chrome.tabs.onRemoved.addListener((tabId) => { setPage(tabId, null).then(refresh
 // Pide a las pestañas de Studio que vuelvan a avisar su estado (para tomar o soltar el Web Lock que las mantiene despiertas)
 async function recheckTabs() {
   for (const id of Object.keys(await getPages())) chrome.tabs.sendMessage(Number(id), { type: 'recheck' }).catch(() => {});
+}
+
+// Borra el vínculo y su estado, pero no el idioma elegido en el combo
+async function clearLink() {
+  const { lang } = await chrome.storage.local.get('lang');
+  await chrome.storage.local.clear();
+  if (lang) await chrome.storage.local.set({ lang });
 }
 
 async function post(path, body, access) {
@@ -86,7 +97,7 @@ async function accessToken(force) {
   if (!s.refresh) return null;
   if (!force && s.access && s.accessExp > Date.now()) return s.access;
   const r = await post('refresh.php', { refresh: s.refresh });
-  if (r.status === 401) { await chrome.storage.local.clear(); return null; }   // desvinculada desde el panel
+  if (r.status === 401) { await clearLink(); return null; }   // desvinculada desde el panel
   if (r.status !== 200 || !r.body.ok) return null;
   await saveTokens(r.body);
   return r.body.access;
@@ -117,7 +128,7 @@ async function sendSubs(channel, subscribers) {
 async function link(code) {
   const r = await post('link.php', { code });
   if (r.status !== 200 || !r.body.ok) return { ok: false };
-  await chrome.storage.local.clear();
+  await clearLink();
   await saveTokens(r.body);
   await recheckTabs();
   return { ok: true, channel: r.body.channel };
@@ -126,7 +137,7 @@ async function link(code) {
 async function unlink() {
   const access = await accessToken(false);
   if (access) { try { await post('unlink.php', {}, access); } catch (e) { /* igual se borra acá */ } }
-  await chrome.storage.local.clear();
+  await clearLink();
   await recheckTabs();
   return { ok: true };
 }
