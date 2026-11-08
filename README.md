@@ -8,6 +8,7 @@ public one, gets the 🛡️ shield on the ICU.Live monitor.
 
 ## Install
 
+- [Chrome](https://chromewebstore.google.com/detail/iculive-shield/johgipldmpncmeedknbjhkihpicngfoa)
 - [Microsoft Edge](https://microsoftedge.microsoft.com/addons/detail/gahhfedaibgfopcddbgijebojbpllodm)
 - [Opera](https://addons.opera.com/extensions/details/iculive-shield/)
 - [Firefox](https://addons.mozilla.org/firefox/addon/icu-live-shield/)

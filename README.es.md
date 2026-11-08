@@ -8,6 +8,7 @@ usa y cuyo número coincide con el público lleva el escudo 🛡️ en el monito
 
 ## Instalar
 
+- [Chrome](https://chromewebstore.google.com/detail/iculive-shield/johgipldmpncmeedknbjhkihpicngfoa)
 - [Microsoft Edge](https://microsoftedge.microsoft.com/addons/detail/gahhfedaibgfopcddbgijebojbpllodm)
 - [Opera](https://addons.opera.com/extensions/details/iculive-shield/)
 - [Firefox](https://addons.mozilla.org/firefox/addon/icu-live-shield/)
